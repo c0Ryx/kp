@@ -36,6 +36,7 @@ const User = sequelize.define('user',{
  const Lawyer = sequelize.define('lawyer',{
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, unique: true, allowNull: false}
+    
  })
 
  const Rating = sequelize.define('rating',{
