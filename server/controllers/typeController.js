@@ -11,6 +11,14 @@ class TypeController {
         const types = await Type.findAll()
         return res.json(types)
     }
+    async delType (req, res){
+        const {name} = req.body
+        const deleted = await Type.destroy({
+            where: {name: name} 
+        })
+        return res.json({message: 'Удаление произолшло успешно!'})
+
+    }
 
 }
 

@@ -2,8 +2,9 @@ const Router = require('express')
 const router = new Router()
 const servicesController = require('../controllers/servicesController')
 
-router.post('/', servicesController.create)
-router.get('/', servicesController.getAll)
-router.get('/:id', servicesController.getOne)
+router.post('/create', servicesController.create)
+router.get('/getAll', servicesController.getAll)
+router.delete('/delServices', servicesController.delServices)
+router.put('/changeServicesCount', servicesController.changeServicesCount)
 
 module.exports = router

@@ -18,13 +18,30 @@ class ServicesController {
 
         }
     }
-    async getAll(req, res){
-        
-        
-    }
-    async getOne(req, res) {
+    
+    async getAll (req, res) {
+        const services = await Services.findAll()
+        return res.json(services) 
 
     }
+
+    async delServices (req, res){
+        const {name} = req.body
+        const deleted = await Services.destroy({
+            where: {name: name} 
+        })
+        return res.json({message: 'Удаление произолшло успешно!'})
+
+    }
+
+    async changeServicesCount (req, res){
+        const {name, price} = req.body
+        const updated = await Services.update({price: price},{where: {name: name}})
+        return res.json(updated)
+
+    }
+
+    
 
 }
 

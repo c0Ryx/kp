@@ -11,6 +11,14 @@ class LawyerController {
         const lawyer = await Lawyer.findAll()
         return res.json(lawyer)
     }
+    async delLawyer (req, res){
+        const {name} = req.body
+        const deleted = await Lawyer.destroy({
+            where: {name: name} 
+        })
+        return res.json({message: 'Удаление произолшло успешно!'})
+
+    }
 
 }
 

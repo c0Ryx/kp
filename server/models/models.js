@@ -39,10 +39,6 @@ const User = sequelize.define('user',{
     
  })
 
- const Rating = sequelize.define('rating',{
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    rate: {type: DataTypes.INTEGER, allowNull: false}
- })
 
  const TypeLawyer = sequelize.define('type_lawyer', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}
@@ -63,9 +59,6 @@ const User = sequelize.define('user',{
  Lawyer.hasMany(Services)
  Services.belongsTo(Lawyer)
 
- Services.hasMany(Rating)
- Rating.belongsTo(Services)
-
  Services.hasMany(BasketServices)
  BasketServices.belongsTo(Services)
 
@@ -79,6 +72,5 @@ const User = sequelize.define('user',{
     Services,
     Type,
     Lawyer,
-    Rating,
     TypeLawyer
  }
