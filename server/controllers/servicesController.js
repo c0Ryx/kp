@@ -1,6 +1,6 @@
 const uuid = require('uuid')
 const path = require ('path')
-const {Services} = require('../models/models')
+const {Services, ServicesInfo} = require('../models/models')
 const ApiError = require('../error/ApiError')
 
 class ServicesController {
@@ -12,6 +12,16 @@ class ServicesController {
             img.mv(path.resolve(__dirname, '..', 'static', fileName))
 
             const services = await Services.create({name, price, lawyerId, typeId, img: fileName})
+            if (info) {
+                info = JSON.parse(info)
+                info.forEach(i =>
+                    ServicesInfo.create({
+                        title: i.title,
+                        description: i.description,
+                        servicesId: services.id
+                    })
+                )
+            }
             return res.json(services)
         } catch (e) {
             next(ApiError.badRequest(e.message))
@@ -39,6 +49,17 @@ class ServicesController {
         const updated = await Services.update({price: price},{where: {name: name}})
         return res.json(updated)
 
+    }
+
+    async getOne(req, res) {
+        const {id} = req.params
+        const services = await Services.findOne(
+            {
+                where: {id},
+                include: [{model: ServicesInfo, as: 'info'}]
+            },
+        )
+        return res.json(services)
     }
 
     
