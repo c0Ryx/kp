@@ -39,9 +39,8 @@ const User = sequelize.define('user',{
     
  })
 
- const ServicesInfo = sequelize.define('device_info', {
+ const ServicesInfo = sequelize.define('services_info', {
    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-   title: {type: DataTypes.STRING, allowNull: false},
    description: {type: DataTypes.STRING, allowNull: false},
 })
 

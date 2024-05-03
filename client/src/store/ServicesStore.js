@@ -2,17 +2,11 @@ import {makeAutoObservable} from "mobx";
 
 export default class ServicesStore {
     constructor() {
-        this._types = [
-            {id: 1, name: "Семейное право"},
-            {id: 2, name: "Налоговые услуги"}
-        ]
-        this._lawyer = [
-            {id: 1, name: "Начинающий специалист"},
-            {id: 2, name: "Специалист среднего уровня"}
-        ]
-        this._services = [
-            {id: 1, name: "Консультация по опеке", price: 2000, img: "073d3bf2-ac0f-4360-8ccc-0c81ff227f7c.jpg"}
-        ]
+        this._types = []
+        this._lawyer = []
+        this._services = []
+        
+        this._selectedType = {}
         makeAutoObservable(this)
     }
 
@@ -27,6 +21,12 @@ export default class ServicesStore {
         this._services = services
     }
 
+    setSelectedType(type) {
+        this._selectedType = type
+    }
+    
+
+
     get types() {
         return this._types
     }
@@ -37,4 +37,8 @@ export default class ServicesStore {
     get services() {
         return this._services
     }
+    get selectedType() {
+        return this._selectedType
+    }
+    
 }
