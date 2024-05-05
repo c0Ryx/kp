@@ -1,12 +1,11 @@
 const ApiError = require('../error/ApiError')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const {User, Basket} = require('../models/models')
-const { email } = require('nodemon')
+const {User} = require('../models/models')
 
-const generateJwt = (id, email, phone, role) => {
+const generateJwt = (id, fullName, phone, role) => {
     return jwt.sign(
-        {id, email, phone, role}, 
+        {id, fullName, phone, role},
         process.env.SECRET_KEY,
         {expiresIn: '24h'}
     )
@@ -14,42 +13,80 @@ const generateJwt = (id, email, phone, role) => {
 
 class UserController {
     async registration(req, res, next) {
-        const {email, password, phone, role} = req.body
-        if (!email || !password || !phone) {
+        const {fullName, password, phone, role} = req.body
+        if (!fullName || !password || !phone) {
             return next(ApiError.badRequest('Некорректные данные'))
         }
-        const candidate = await User.findOne({where: {email}})
+        const candidate = await User.findOne({where: {phone: phone}})
+
         if (candidate) {
-            return next(ApiError.badRequest('Пользователь с таким email уже существует'))
-        }
-        const candidate1 = await User.findOne({where: {phone}})
-        if (candidate1) {
             return next(ApiError.badRequest('Пользователь с таким телефоном уже существует'))
         }
+
         const hashPassword = await bcrypt.hash(password, 5)
-        const user = await User.create({email, phone, role, password: hashPassword})
-        const basket = await Basket.create({userId: user.id})
-        const token = generateJwt(user.id, user.email, user.phone, user.role)
+        const user = await User.create({fullName, phone, role, password: hashPassword})
+        if (role !== 'USER') {
+            return res.json({"message": 'cool'})
+        }
+        const token = generateJwt(user.id, user.phone, user.role)
         return res.json({token})
     }
-    async login(req, res, next) {
-        const {email, password} = req.body
-        const user = await User.findOne({where: {email}})
+
+    async addNewWorker(req, res) {
+        const {fullName, password, phone, role} = req.body
+        if (!fullName || !password || !phone) {
+            return next(ApiError.badRequest('Некорректные данные'))
+        }
+        const candidate = await User.findOne({where: {phone: phone}})
+
+        if (candidate) {
+            return next(ApiError.badRequest('Пользователь с таким телефоном уже существует'))
+        }
+
+        const hashPassword = await bcrypt.hash(password, 5)
+        const user = await User.create({fullName, phone, role, password: hashPassword})
+
+        return res.json(user)
+    }
+
+    async login (req, res, next){
+        const {phone, password} = req.body
+        const user = await User.findOne({where: {phone: phone}})
         if (!user) {
             return next(ApiError.internal('Пользователь не найден'))
         }
         let comparePassword = bcrypt.compareSync(password, user.password)
         if (!comparePassword) {
-            return next(ApiError.internal('Пользователь не найден'))
+            return next(ApiError.internal('Указан неверный пароль'))
         }
-        const token = generateJwt(user.id, user.email, user.phone, user.role)
-        return res.json({token})
-    }
-    async check(req, res, next) {
-        const token = generateJwt(user.id, user.email, user.phone, user.role)
+        const token = generateJwt(user.id, user.fullName, user.phone, user.role)
         return res.json({token})
     }
 
+    async auth (req, res, next){
+        const token = generateJwt(req.user.id, req.user.fullName, req.user.phone, req.user.role)
+        return res.json({token})
+    }
+
+    async deleteuser (req, res){
+        const {id} = req.body
+        const deleted = await User.destroy({
+            where: {id: id}
+        })
+        return res.json({message: 'Удаление произошло успешно!'})
+    }
+
+    async logout(req, res) {
+        const {id} = req.body
+        const deleteToken = await User.update ({token: null}, {where:{id: id}})
+        return res.json('succes')
+    }
+
+    async getAllLawyers(req, res, next){
+
+        const users = await User.findAll({where: {role: 'LAWYER'}})
+        return res.json(users)
+    }
 }
 
 module.exports = new UserController()

@@ -1,44 +1,61 @@
 import {makeAutoObservable} from "mobx";
+import ServicesService from "../service/ServicesService";
 
 export default class ServicesStore {
     constructor() {
-        this._types = []
-        this._lawyer = []
-        this._services = []
-        
-        this._selectedType = {}
+        this._service = {}
+        this._serviceList = []
         makeAutoObservable(this)
     }
 
-    setTypes(types) {
-        this._types = types
+    setService(service) {
+        this._service = service
+    }
+    setServiceList(list) {
+        this._serviceList = list
     }
 
-    setLawyer(lawyer) {
-        this._lawyer = lawyer
-    }
-    setServices(services) {
-        this._services = services
-    }
-
-    setSelectedType(type) {
-        this._selectedType = type
-    }
-    
 
 
-    get types() {
-        return this._types
+    async create(name, price, description){
+        try {
+            const {data} = await ServicesService.create(name, price, description)
+            this.setService(data)
+            return data
+        } catch (e) {
+            console.log(e.response?.data?.message)
+        }
+
     }
 
-    get lawyer() {
-        return this._lawyer
+    async getAll() {
+        try {
+            const {data} = await ServicesService.getAll()
+            this.setServiceList(data)
+            return data
+        } catch (e) {
+            console.log(e.response?.data?.message)
+        }
+
     }
-    get services() {
-        return this._services
+
+    async getOne(id) {
+        try {
+            const {data} = await ServicesService.getOne(id)
+            this.setService(data)
+            return data
+        } catch (e) {
+            console.log(e.response?.data?.message)
+        }
     }
-    get selectedType() {
-        return this._selectedType
+
+
+    async delService(id) {
+        try {
+            const {data} = await ServicesService.delService(id)
+            return data
+        } catch (e) {
+            console.log(e.response?.data?.message)
+        }
     }
-    
 }

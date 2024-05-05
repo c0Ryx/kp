@@ -1,32 +1,17 @@
 import React, { useContext, useEffect } from "react";
 import { Container } from "react-bootstrap";
-import TypeBar from "../components/TypeBar";
 import { Col , Row } from "react-bootstrap";
-import ServicesList from "../components/ServicesList";
 import { observer } from "mobx-react-lite";
-import { Context } from "..";
-import { fetchLawyer, fetchServices, fetchType } from "../http/servicesAPI";
+import ServiceList from "../components/ServiceList";
 
-const home = observer(() => {
-  const {services} = useContext(Context)
+const Home = observer(() => {
 
-  useEffect(() => {
-    fetchType().then(data => services.setTypes(data))
-    fetchLawyer().then(data => services.setLawyer(data))
-    fetchServices().then(data => services.setServices(data.rows))
-  }, [])
   return (
-    <Container>
-        <Row className="mt-2">
-          <Col md={3}>
-            <TypeBar/>
-          </Col>
-          <Col md={9}>
-            <ServicesList/>
-          </Col>
-        </Row>
-    </Container>
+      <div className='home_wrapper d-flex flex-column align-items-center'>
+          <h1 className='text-center mt-2'>Доступные услуги</h1>
+          <ServiceList/>
+      </div>
   );
 });
 
-export default home;
+export default Home;

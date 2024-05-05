@@ -3,8 +3,11 @@ const router = new Router()
 const lawyerController = require('../controllers/aplicationController')
 const checkRole = require('../middleware/checkRoleMiddleware')
 
-router.post('/', checkRole('ADMIN'), lawyerController.create)
+router.post('/', lawyerController.create)
 router.get('/', lawyerController.getAll)
-router.delete('/delLawyer', lawyerController.delLawyer)
+router.get('/:id', lawyerController.getOne)
+router.put('/updServiceId', checkRole('ADMIN'), lawyerController.changeServiceId)
+router.put('/updUserId', checkRole('ADMIN'), lawyerController.changeUserId)
+router.delete('/', lawyerController.delLawyer)
 
 module.exports = router

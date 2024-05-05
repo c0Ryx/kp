@@ -1,38 +1,51 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import { Button, Container } from "react-bootstrap";
-import CreateLawyer from "../components/modals/CreateLawyer";
-import CreateType from "../components/modals/CreateType";
-import CreateServices from "../components/modals/CreateServices";
-
+import CreateService from "../components/CreateService";
+import LawyerList from "../components/LawyerList";
+import ServiceTable from "../components/ServiceTable";
+import AplicationsList from "../components/AplicationsList";
+import ActiveAplicationList from "../components/ActiveAplicationList";
+import {Context} from "../index";
+import './admin.css'
+import {useNavigate} from "react-router-dom";
+import {REGISTRATION_ROUTE} from "../utils/consts";
+import {observer} from "mobx-react-lite";
 const Admin = () => {
-  const [lawyerVisible, setLawyerVisible] = useState(false)
-  const [typeVisible, setTypeVisible] = useState(false)
-  const [servicesVisible, setServicesVisible] = useState(false)
+  const {user} = useContext(Context)
+  const [currentState, setCurrentState] = useState('create')
+  const navigate = useNavigate()
   return (
-    <Container className="d-flex flex-column">
-        <Button 
-        variant={"outline-dark"}
-         className="mt-2 p-2"
-        onClick={() => setTypeVisible(true)}
-         >Добавить категорию</Button>
+      <div className='w-100 d-flex flex-column align-items-center'>
+          <div className='w-100 mt-5 d-flex justify-content-around align-items-center'>
+              {user.user.role === 'ADMIN' && <Button variant="primary" onClick={() => setCurrentState('create')}>
+                  Создать услугу
+              </Button>}
+              {user.user.role === 'ADMIN' && <Button variant="primary" onClick={() => setCurrentState('lawyer')}>
+                  Список юристов
+              </Button>}
+              {user.user.role === 'ADMIN' && <Button variant="primary" onClick={() => setCurrentState('service')}>
+                  Список услуг
+              </Button>}
+              <Button variant="primary" onClick={() => setCurrentState('apli')}>
+                  Список заявок
+              </Button>
+              <Button variant="primary" onClick={() => setCurrentState('activeApli')}>
+                  Список активных заявок
+              </Button>
+              {user.user.role === 'ADMIN' && <Button onClick={() => navigate(REGISTRATION_ROUTE)}>
+                  Зарегистрировать сотрудника
+              </Button>}
+          </div>
+          <div className='w-75 admin_tab mt-5 d-flex justify-content-center align-items-center'>
+              {currentState === 'create' && user.user.role === 'ADMIN' && <CreateService/>}
+              {currentState === 'lawyer' && user.user.role === 'ADMIN' && <LawyerList/>}
+              {currentState === 'service' && user.user.role === 'ADMIN' && <ServiceTable/>}
+              {currentState === 'apli' && <AplicationsList/>}
+              {currentState === 'activeApli' && <ActiveAplicationList/>}
 
-        <Button 
-        variant={"outline-dark"} 
-        className="mt-2 p-2"
-        onClick={() => setLawyerVisible(true)}
-        >Добавить специалиста</Button>
-
-        <Button 
-        variant={"outline-dark"} 
-        className="mt-2 p-2"
-        onClick={() => setServicesVisible(true)}
-        >Добавить услугу</Button>
-        <CreateLawyer show={lawyerVisible} onHide={() => setLawyerVisible(false)}/>
-        <CreateServices show={servicesVisible} onHide={() => setServicesVisible(false)}/>
-        <CreateType show={typeVisible} onHide={() => setTypeVisible(false)}/>
-
-    </Container>
+          </div>
+      </div>
   );
 };
 
-export default Admin;
+export default observer(Admin);

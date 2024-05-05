@@ -1,25 +1,49 @@
-const {Lawyer} = require('../models/models')
+const {Aplication, Services} = require('../models/models')
 const ApiError = require('../error/ApiError');
 
-class LawyerController {
+class AplicationController {
     async create(req, res){
-        const {name} = req.body
-        const lawyer = await Lawyer.create({name})
+        const {serviceId, userId, price} = req.body
+        const lawyer = await Aplication.create({serviceId, userId, price})
         return res.json(lawyer)
     }
     async getAll(req, res){
-        const lawyer = await Lawyer.findAll()
+        const lawyer = await Aplication.findAll()
         return res.json(lawyer)
     }
+
+    async getOne(req, res) {
+        const {id} = req.params
+        const aplication = await Aplication.findOne(
+            {
+                where: {id: id},
+            }
+        )
+        return res.json(aplication)
+    }
+
     async delLawyer (req, res){
-        const {name} = req.body
-        const deleted = await Lawyer.destroy({
-            where: {name: name} 
+        const {id} = req.body
+        const deleted = await Aplication.destroy({
+            where: {deleted: id}
         })
         return res.json({message: 'Удаление произолшло успешно!'})
+    }
 
+    async changeServiceId(req, res) {
+        const {id, serviceId} = req.body
+        const updated = await  Aplication.update({serviceId: serviceId}, {where: {id: id}})
+        const aplication = await Aplication.findOne({where: {id: id}})
+        return res.json(aplication)
+    }
+
+    async changeUserId(req, res) {
+        const {id, userId} = req.body
+        const updated = await  Aplication.update({userId:userId}, {where: {id: id}})
+        const aplication = await Aplication.findOne({where: {id: id}})
+        return res.json(aplication)
     }
 
 }
 
-module.exports = new LawyerController()
+module.exports = new AplicationController()

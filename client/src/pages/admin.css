@@ -1,0 +1,12 @@
+.admin_tab {
+    border: 1px solid black;
+    height: 30vw;
+    border-radius: 15px;
+}
+
+.create_service {
+    border: 1px solid black;
+    width: 50% !important;
+    border-radius: 15px;
+    padding: 2%;
+}

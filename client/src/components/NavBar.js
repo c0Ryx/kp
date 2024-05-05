@@ -10,9 +10,8 @@ import { useNavigate } from "react-router-dom";
 const NavBar = observer(() => {
     const {user} = useContext(Context)
     const navigate = useNavigate()
-    const logOut = () => {
-        user.setUser({})
-        user.setIsAuth(false)
+    const logout = async () => {
+        await user.logout(user.user.id)
     }
 
     return (
@@ -21,14 +20,14 @@ const NavBar = observer(() => {
         <NavLink style={{color: "white"}} to={HOME_ROUTE}>LawPro</NavLink>
         {user.isAuth ? 
         <Nav className="ml-auto" style={{color: "white"}}>
-            <Button 
+            {user.user.role !== "USER" && <Button
             variant="outline_white" 
             style={{color: "lightgrey"}} 
-            onClick={() => navigate(ADMIN_ROUTE)}>Админ панель</Button>
+            onClick={() => navigate(ADMIN_ROUTE)}>Админ панель</Button>}
             <Button 
             variant="outline_white" 
             style={{color: "lightgrey"}}
-            onClick={() => logOut()} 
+            onClick={logout}
             className="ml-3">Выйти</Button>
         </Nav>
         :

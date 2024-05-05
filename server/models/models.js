@@ -1,82 +1,51 @@
 const sequelize = require('../db')
 const {DataTypes} = require('sequelize')
 
-const User = sequelize.define('user',{
+const User = sequelize.define('users',{
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    email: {type: DataTypes.STRING, unique: true},
-    password: {type: DataTypes.STRING},
-    phone: {type: DataTypes.INTEGER, unique: true},
+    fullName: {type: DataTypes.STRING, allowNull: false},
+    password: {type: DataTypes.STRING, allowNull: false},
+    phone: {type: DataTypes.INTEGER, unique: true, allowNull: false},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
- })
-
- const Basket = sequelize.define('basket',{
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}
-    
- })
-
- const BasketServices = sequelize.define('basket_services',{
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}
-    
  })
 
  const Services = sequelize.define('services',{
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
-    price: {type: DataTypes.INTEGER, allowNull: false},
-    rating: {type: DataTypes.INTEGER, defaultValue: 0},
-    img: {type: DataTypes.STRING, allowNull: false},
-    
+    name: {type: DataTypes.STRING, allowNull: false},
+    price: {type: DataTypes.STRING, allowNull: false},
+    description: {type: DataTypes.STRING, allowNull: true},
  })
 
- const Type = sequelize.define('type',{
+const Aplication = sequelize.define('aplications',{
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false}
- })
+    serviceId: {type: DataTypes.INTEGER, allowNull: false},
+    userId: {type: DataTypes.INTEGER, allowNull: false},
+    price: {type: DataTypes.STRING, allowNull: false},
+})
 
- const Lawyer = sequelize.define('lawyer',{
+const LawyerAplication = sequelize.define('lawyerAplications', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false}
-    
- })
-
- const ServicesInfo = sequelize.define('services_info', {
-   id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-   description: {type: DataTypes.STRING, allowNull: false},
+    aplicationId: {type: DataTypes.INTEGER, allowNull: false},
+    userId: {type: DataTypes.INTEGER, allowNull: false},
 })
 
 
- const TypeLawyer = sequelize.define('type_lawyer', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}
- })
+Services.hasMany(Aplication)
+Aplication.belongsTo(Services)
 
- User.hasOne(Basket)
- Basket.belongsTo(User)
+User.hasMany(Aplication)
+Aplication.belongsTo(User)
 
- Basket.hasMany(BasketServices)
- BasketServices.belongsTo(Basket)
+Aplication.hasMany(LawyerAplication)
+LawyerAplication.belongsTo(Aplication)
 
- Type.hasMany(Services)
- Services.belongsTo(Type)
+User.hasMany(LawyerAplication)
+LawyerAplication.belongsTo(User)
 
- Lawyer.hasMany(Services)
- Services.belongsTo(Lawyer)
-
- Services.hasMany(BasketServices)
- BasketServices.belongsTo(Services)
-
- Services.hasMany(ServicesInfo, {as: 'info'});
- ServicesInfo.belongsTo(Services)
-
- Type.belongsToMany(Lawyer, {through: TypeLawyer})
- Lawyer.belongsToMany(Type, {through: TypeLawyer})
 
  module.exports = {
-    User, 
-    Basket,
-    BasketServices,
+    User,
     Services,
-    Type,
-    Lawyer,
-    TypeLawyer,
-    ServicesInfo
+    Aplication,
+    LawyerAplication
  }
