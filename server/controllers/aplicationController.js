@@ -25,7 +25,7 @@ class AplicationController {
     async delLawyer (req, res){
         const {id} = req.body
         const deleted = await Aplication.destroy({
-            where: {deleted: id}
+            where: {id: id}
         })
         return res.json({message: 'Удаление произолшло успешно!'})
     }
